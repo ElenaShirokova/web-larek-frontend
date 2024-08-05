@@ -75,9 +75,45 @@ export interface IPage {
 
 // Интерфейс карточки товара на главной странице
 export interface ICard {
-    id: number;
+    id: string;
     category: string;
     title: string;
     image: string;
     price: number;
+}
+
+// Интерфейс модального окна
+export interface IModal {
+    contentModal: HTMLElement;
+}
+
+// Интерфейс корзины
+export interface IBasket {
+    productArray: HTMLElement[];
+    total: number;
+}
+
+// Интерфейс карточки товара в корзине
+export interface ICardBasket {
+    title: string;
+    price: number;
+    indexItem: number;
+    id: string;
+}
+
+// Интерфейс настроек заказа(способ оплаты и адрес доставки)
+export interface ISettingsOrder {
+    address: string;
+    payment: string;
+}
+
+// Интерфейс настроек заказа(контакты юзера)
+export interface IUserInfo {
+    email: string;
+    phone: string;
+}
+
+// Интерфейс отображения финишной страницы
+export interface ISuccessPage {
+    total: number;
 }

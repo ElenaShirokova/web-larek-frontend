@@ -8,12 +8,12 @@ export class ProductModel {
 
     //загрузить массив объектов Product
     setProductsList(items: IProduct[]) {
-        this.events.emit('product_items_set: changed');
+        this.events.emit('product_items:set_items');
     };
 
     //добавить в массив объект Product
     addProduct(item: IProduct) {
-        this.events.emit('product_items_add_item: changed');
+        this.events.emit('product_items:add_item');
     };
 
     //получить объект Product
@@ -30,7 +30,7 @@ export class OrderModel {
 
     //добавить в массив объектов объект Order
     addOrder(item: IOrder) {
-        this.events.emit('order_items_add_item: changed');
+        this.events.emit('order_items:add_item');
     };
 
     //получить объект Order
@@ -38,7 +38,7 @@ export class OrderModel {
 
     //изменить объект Order
     editOrder(id: string, data: Partial<IOrder>) {
-        this.events.emit('order_items_edit_item: changed');
+        this.events.emit('order_items:edit_item');
     };
 
     //отправить заказ на сервер
@@ -46,12 +46,12 @@ export class OrderModel {
 
     //добавить товар в заказ
     addProduct(id: string, data: string) {
-        this.events.emit('order_items_add_product: changed');
+        this.events.emit('order_items:add_product');
     };
 
     //удалить товар из заказа
     removeProduct(id: string, data: string) {
-        this.events.emit('order_items_remove_product: changed');
+        this.events.emit('order_items:remove_product');
     };
 
     //получить список id товаров в заказе
@@ -62,4 +62,13 @@ export class OrderModel {
 
     //получить количество товаров в заказе
     getCounter(id: string) {};
+
+    //валидация поля email
+    validateEmail(data: string) {};
+
+    //валидация поля phone
+    validatePhone(data: string) {};
+
+    //валидация поля address
+    validateAddress(data: string) {};
 }
