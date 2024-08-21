@@ -4,41 +4,56 @@ import { IEvents } from "./base/events";
 // класс модели товара
 export class ProductModel {
     protected items: IProduct[] = [];
-    constructor(protected events: IEvents) {}
+    constructor() {}
+    // constructor(protected events: IEvents) {}
 
     //загрузить массив объектов Product
     setProductsList(items: IProduct[]) {
-        this.events.emit('product_items:set_items');
+        this.items = items;
+        // this.events.emit('product_items:set_items');
     };
 
     //добавить в массив объект Product
     addProduct(item: IProduct) {
-        this.events.emit('product_items:add_item');
+        this.items = [item, ...this.items]
+        // this.events.emit('product_items:add_item');
     };
 
     //получить объект Product
-    getProduct(id: string) {};
+    getProduct(id: string) {
+        return this.items.find((item) => item.id === id);
+    };
 
     //получить массив объектов Product
-    getProductsList() {};
+    getProductsList() {
+        return this.items
+    };
 }
 
 // класс модели заказа
 export class OrderModel {
     protected items: IOrder[] = [];
-    constructor(protected events: IEvents) {}
+    constructor() {}
+    // constructor(protected events: IEvents) {}
 
     //добавить в массив объектов объект Order
     addOrder(item: IOrder) {
-        this.events.emit('order_items:add_item');
+        this.items = [item, ...this.items]
+        // this.events.emit('order_items:add_item');
     };
 
     //получить объект Order
-    getOrder(id: string) {};
+    getOrder(id: string) {
+        return this.items.find((item) => item.id === id);
+    };
 
     //изменить объект Order
     editOrder(id: string, data: Partial<IOrder>) {
-        this.events.emit('order_items:edit_item');
+        const item = this.getOrder(id);
+        if (item) {
+            Object.assign(item, data);
+            // this.events.emit('order_items:edit_item');
+        }
     };
 
     //отправить заказ на сервер
@@ -46,22 +61,46 @@ export class OrderModel {
 
     //добавить товар в заказ
     addProduct(id: string, data: string) {
-        this.events.emit('order_items:add_product');
+        const item = this.getOrder(id);
+        if (item) {
+            item.items = [data, ...item.items]
+            // this.events.emit('order_items:edit_item');
+        }
     };
 
     //удалить товар из заказа
     removeProduct(id: string, data: string) {
-        this.events.emit('order_items:remove_product');
+        const item = this.getOrder(id);
+        if (item) {
+            item.items = item.items.filter(function(item) {
+                return item !== data
+        })
+        // this.events.emit('order_items:remove_product');
+        }
     };
 
     //получить список id товаров в заказе
-    getArrIdProduct(id: string) {};
+    getArrIdProduct(id: string) {
+        const item = this.getOrder(id);
+        return item.items
+    };
 
     //получить полную стоимость заказа
-    getTotalOrder(id: string) {};
+    getTotalOrder(id: string, items: IProduct[]) {
+        let counter = 0;
+        const listProduct = this.getArrIdProduct(id);
+        listProduct.forEach((item) => {
+            const product = items.find((item_obj) => item_obj.id === item);
+            counter += product.price
+        });
+        return counter
+    };
 
     //получить количество товаров в заказе
-    getCounter(id: string) {};
+    getCounter(id: string) {
+        const item = this.getOrder(id);
+        return item.items.length
+    };
 
     //валидация поля email
     validateEmail(data: string) {};

@@ -105,7 +105,7 @@ type PaymentElement = 'Онлайн' | 'При получении';
 - addProduct(id: string, data: string) - предназначен для добавления в массив id товаров в заказе (в поле items: string[]) еще одного id товара, метод имеет сигнализатор события брокера событий;
 - removeProduct(id: string, data: string) - предназначен для удаления из массива id товаров в заказе (в поле items: string[]) id товара, метод имеет сигнализатор события брокера событий;
 - getArrIdProduct(id: string) - предназначен для получения массива id товаров в заказе по id заказа;
-- getTotalOrder(id: string) - предназначен для получения полной стоимости заказа по id заказа;
+- getTotalOrder(id: string, items: IProduct[]) - предназначен для получения полной стоимости заказа по id заказа;
 - getCounter(id: string) - предназначен для получения количества товаров в заказе по id заказа;
 - validateEmail(data: string) - валидация поля email;
 - validatePhone(data: string) - валидация поля phone;

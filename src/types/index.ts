@@ -9,7 +9,7 @@ export interface IProduct {
 }
 
 // Тип интерфейса способа оплаты заказа
-type PaymentElement = 'Онлайн' | 'При получении';
+type PaymentElement = 'online' | 'При получении';
 // Интерфейс модели объекта Заказ
 export interface IOrder {
     id: string;
