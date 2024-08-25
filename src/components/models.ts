@@ -4,19 +4,18 @@ import { IEvents } from "./base/events";
 // класс модели товара
 export class ProductModel {
     protected items: IProduct[] = [];
-    constructor() {}
-    // constructor(protected events: IEvents) {}
+    constructor(protected events: IEvents) {}
 
     //загрузить массив объектов Product
     setProductsList(items: IProduct[]) {
         this.items = items;
-        // this.events.emit('product_items:set_items');
+        this.events.emit('product_items:set_items');
     };
 
     //добавить в массив объект Product
     addProduct(item: IProduct) {
         this.items = [item, ...this.items]
-        // this.events.emit('product_items:add_item');
+        this.events.emit('product_items:add_item');
     };
 
     //получить объект Product

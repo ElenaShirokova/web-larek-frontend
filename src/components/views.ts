@@ -23,7 +23,7 @@ export class Page extends Component<IPage> implements IPage {
     }
 
     set counterBasket(value: number) {
-        this.setText(this.numberProducts, `${String(value)}`);
+        this.setText(this.numberProducts, value);
     }
 }
 
@@ -32,7 +32,7 @@ export class Page extends Component<IPage> implements IPage {
 export class Card extends Component<ICard> {
     protected categoryItem: HTMLElement;
     protected titleItem: HTMLElement;
-    protected imageItem: HTMLElement;
+    protected imageItem: HTMLImageElement;
     protected priceItem: HTMLElement;
     protected galleryButton: HTMLButtonElement;
     protected _id: string;
@@ -41,17 +41,36 @@ export class Card extends Component<ICard> {
         super(container);
         this.categoryItem = ensureElement('.card__category_soft', this.container);
         this.titleItem = ensureElement('.card__title', this.container);
-        this.imageItem = ensureElement('.card__image', this.container);
+        this.imageItem = ensureElement('.card__image', this.container) as HTMLImageElement;
         this.priceItem = ensureElement('.card__price', this.container);
-        this.galleryButton = ensureElement('.gallery__item card', this.container) as HTMLButtonElement;
+        this.galleryButton = this.container.querySelector('.gallery__item') as HTMLButtonElement;
         this.galleryButton.addEventListener('click', () => this.events.emit('card:click', {id: this._id}));
     }
 
-    set id(value: string) {};
-    set category(value: string) {};
-    set title(value: string) {};
-    set image(value: string) {};
-    set price(value: number) {};
+    // устанавливает id товара
+    set id(value: string) {
+        this._id = value;
+    };
+
+    // устанавливает категорию товара
+    set category(value: string) {
+        this.setText(this.categoryItem, value);
+    };
+
+    // устанавливает название товара
+    set title(value: string) {
+        this.setText(this.titleItem, value);
+    };
+
+    // устанавливает изображение товара
+    set image(value: string) {
+        this.setImage(this.imageItem, value);
+    };
+
+    // устанавливает цену товара
+    set price(value: number) {
+        this.setText(this.priceItem, `${value} синапсов`);
+    };
 }
 
 
