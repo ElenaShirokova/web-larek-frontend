@@ -32,8 +32,8 @@ export class ProductModel {
 // класс модели заказа
 export class OrderModel {
     protected items: IOrder[] = [];
-    constructor() {}
-    // constructor(protected events: IEvents) {}
+
+    constructor(protected events: IEvents) {}
 
     //добавить в массив объектов объект Order
     addOrder(item: IOrder) {
@@ -63,7 +63,7 @@ export class OrderModel {
         const item = this.getOrder(id);
         if (item) {
             item.items = [data, ...item.items]
-            // this.events.emit('order_items:edit_item');
+            this.events.emit('order_items:add_item', { _id: id });
         }
     };
 

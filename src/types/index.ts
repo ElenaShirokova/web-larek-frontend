@@ -23,7 +23,7 @@ export interface IOrder {
 
 // Интерейс API
 //API - "name": "Product Item" - response 200
-export interface ProductItem {
+export interface IProductItem {
     id: string;
     description: string;
     image: string;
@@ -33,9 +33,9 @@ export interface ProductItem {
 }
 
 // API - "name": "Product List" - response 200
-export interface ProductList {
+export interface IProductList {
     total: number;
-    items: ProductItem[];
+    items: IProductItem[];
 }
 
 // API - "name": "Order" - request
@@ -61,8 +61,8 @@ export interface ResponseError {
 
 // Интерфейс API-клиента
 export interface API {
-    getProduct: (id: string) => Promise<ProductItem>;
-    getProducts: () => Promise<ProductItem[]>;
+    getProduct: (id: string) => Promise<IProductItem>;
+    getProducts: () => Promise<IProductItem[]>;
     orderProducts: (order: OrderRequest) => Promise<OrderResponse>;
 }
 

@@ -2,6 +2,7 @@ import { ensureElement } from "../utils/utils";
 import { Component } from "./base/component";
 import { IPage, ICard, IModal, IProduct, IBasket, ICardBasket, ISettingsOrder, IUserInfo, ISuccessPage } from "../types";
 import { IEvents } from "./base/events";
+import { ModalBase } from "./modal";
 
 
 // Класс отображения главной страницы
@@ -39,11 +40,11 @@ export class Card extends Component<ICard> {
 
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
-        this.categoryItem = ensureElement('.card__category_soft', this.container);
+        this.categoryItem = ensureElement('.card__category', this.container);
         this.titleItem = ensureElement('.card__title', this.container);
         this.imageItem = ensureElement('.card__image', this.container) as HTMLImageElement;
         this.priceItem = ensureElement('.card__price', this.container);
-        this.galleryButton = this.container.querySelector('.gallery__item') as HTMLButtonElement;
+        this.galleryButton = this.container as HTMLButtonElement;
         this.galleryButton.addEventListener('click', () => this.events.emit('card:click', {id: this._id}));
     }
 
@@ -74,19 +75,21 @@ export class Card extends Component<ICard> {
 }
 
 
-// Класс модального окна
-export class Modal extends Component<IModal> implements IModal {
+// Класс основы модального окна
+export class Modal extends ModalBase<IModal> implements IModal {
     protected contentContainer: HTMLElement;
     protected closeButton: HTMLButtonElement;
 
-    constructor(container: HTMLElement, protected events: IEvents) {
-        super(container);
+    constructor(container: HTMLElement, events: IEvents) {
+        super(container, events);
         this.contentContainer = ensureElement('.modal__content', this.container);
         this.closeButton = ensureElement('.modal__close', this.container) as HTMLButtonElement;
         this.closeButton.addEventListener('click', () => this.events.emit('closeModal:click'));
     }
 
-    set contentModal(data: HTMLElement) {};
+    set contentModal(data: HTMLElement) {
+        this.contentContainer.replaceChildren(data);
+    };
 }
 
 
@@ -103,7 +106,9 @@ export class CardPreview extends Card implements IProduct {
         this.inBasketButton.addEventListener('click', () => this.events.emit('inBasket:click', {id: this._id}));
     }
 
-    set description(value: string) {};
+    set description(value: string) {
+        this.setText(this.textItem, value);
+    };
 }
 
 

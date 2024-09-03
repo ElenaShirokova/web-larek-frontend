@@ -1,4 +1,4 @@
-import { IProduct, OrderRequest, OrderResponse } from "../types";
+import { IProduct, OrderRequest, OrderResponse, IProductItem, IProductList } from "../types";
 import { Api } from "./base/api";
 import { API_URL } from  "../utils/constants"
 
@@ -8,12 +8,12 @@ export class LarekApi extends Api {
         super(baseUrl, options);
     }
 
-    getProduct(id: string): Promise<IProduct> {
-        return this.get<IProduct>(`/product/${id}`);
+    getProduct(id: string): Promise<IProductItem> {
+        return this.get<IProductItem>(`/product/${id}`);
     };
 
-    getProducts(): Promise<IProduct[]> {
-        return this.get<IProduct[]>('/product/');
+    getProducts(): Promise<IProductList> {
+        return this.get<IProductList>('/product/');
     };
 
     orderProducts(order: OrderRequest): Promise<OrderResponse> {
