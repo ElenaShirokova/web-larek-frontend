@@ -39,21 +39,37 @@ events.on('product_items:set_items', () => {
 })
 
 // открыть модальное окно карточки товара
-events.on('card:click', (data: {_id: string}) => {
+events.on('card:click', ({id}: {id: string}) => {
   modal.open();
-  const { _id } = data;
-  const objProduct = productModel.getProduct(_id);
+  const objProduct = productModel.getProduct(id)
   const cardHTML = cardPreview.render(objProduct);
   modal.render({
     contentModal: cardHTML
   })
+  const arrBasket = orderModel.getArrIdProduct();
+  if (arrBasket.includes(id)) {
+    cardPreview.buttonText('Из корзины');
+  } else {
+    cardPreview.buttonText('В корзину');
+  }
+})
+
+// добавить/удалить товар из корзины через карточку товара
+events.on('inBasket:click', ({id}: {id: string}) => {
+  const arrBasket = orderModel.getArrIdProduct();
+  if (arrBasket.includes(id)) {
+    orderModel.removeProduct(id);
+    cardPreview.buttonText('В корзину');
+  } else {
+    orderModel.addProduct(id);
+    cardPreview.buttonText('Из корзины');
+  }
 })
 
 
 // отрисовать количество товара в корзине в шапке страницы
-events.on('order_items:add_item', (data: {_id: string}) => {
-  const { _id } = data;
-  const counter = orderModel.getCounter(_id);
+events.on('order_items:change_order', () => {
+  const counter = orderModel.getCounter();
   page.render(
     {
       counterBasket: counter

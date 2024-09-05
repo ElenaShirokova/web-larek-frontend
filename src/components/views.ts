@@ -109,6 +109,10 @@ export class CardPreview extends Card implements IProduct {
     set description(value: string) {
         this.setText(this.textItem, value);
     };
+
+    buttonText(value: string) {
+        this.setText(this.inBasketButton, value);
+    }
 }
 
 

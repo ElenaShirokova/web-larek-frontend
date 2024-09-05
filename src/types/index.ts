@@ -12,7 +12,6 @@ export interface IProduct {
 type PaymentElement = 'online' | 'При получении';
 // Интерфейс модели объекта Заказ
 export interface IOrder {
-    id: string;
     payment: PaymentElement;
     email: string;
     phone: string;
@@ -40,7 +39,7 @@ export interface IProductList {
 
 // API - "name": "Order" - request
 export interface OrderRequest {
-    payment: string;
+    payment: PaymentElement;
     email: string;
     phone: string;
     address: string;
