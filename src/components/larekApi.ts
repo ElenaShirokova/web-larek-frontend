@@ -1,4 +1,4 @@
-import { IProduct, OrderRequest, OrderResponse, IProductItem, IProductList } from "../types";
+import { OrderRequest, OrderResponse, IProductItem, IProductList } from "../types";
 import { Api } from "./base/api";
 import { API_URL } from  "../utils/constants"
 

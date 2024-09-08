@@ -9,7 +9,7 @@ export interface IProduct {
 }
 
 // Тип интерфейса способа оплаты заказа
-type PaymentElement = 'online' | 'При получении';
+export type PaymentElement = 'Онлайн' | 'При получении' | '';
 // Интерфейс модели объекта Заказ
 export interface IOrder {
     payment: PaymentElement;
@@ -18,7 +18,6 @@ export interface IOrder {
     address: string;
     items: string[]; //id товаров
 }
-
 
 // Интерейс API
 //API - "name": "Product Item" - response 200
@@ -61,7 +60,7 @@ export interface ResponseError {
 // Интерфейс API-клиента
 export interface API {
     getProduct: (id: string) => Promise<IProductItem>;
-    getProducts: () => Promise<IProductItem[]>;
+    getProducts: () => Promise<IProductList>;
     orderProducts: (order: OrderRequest) => Promise<OrderResponse>;
 }
 
@@ -90,6 +89,7 @@ export interface IModal {
 export interface IBasket {
     productArray: HTMLElement[];
     total: number;
+    valid: boolean;
 }
 
 // Интерфейс карточки товара в корзине
@@ -103,13 +103,17 @@ export interface ICardBasket {
 // Интерфейс настроек заказа(способ оплаты и адрес доставки)
 export interface ISettingsOrder {
     address: string;
-    payment: string;
+    payment: PaymentElement;
+    error: string;
+    valid: boolean;
 }
 
 // Интерфейс настроек заказа(контакты юзера)
 export interface IUserInfo {
     email: string;
     phone: string;
+    error: string;
+    valid: boolean;
 }
 
 // Интерфейс отображения финишной страницы

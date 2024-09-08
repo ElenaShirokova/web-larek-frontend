@@ -23,16 +23,40 @@ export class ProductModel {
         return this.items.find((item) => item.id === id);
     };
 
-    //получить массив объектов Product
+    //получить массив всех объектов Product
     getProductsList() {
         return this.items
     };
+
+    //получить массив объектов по списку id
+    getProductsArr(arr_id: string[]) {
+        return arr_id.map(item_id => this.getProduct(item_id));
+    };
+
+    //получить массив id товаров с ненулевой ценой
+    getProductsArrNotNull(arr_id: string[]) {
+        const arrProducts = arr_id.filter((id) => {
+            const product = this.getProduct(id);
+            return product.price !== null;
+        });
+        return arrProducts
+    };
+
+    //получить полную стоимость корзины
+    getTotalBasket(arr_id: string[]) {
+        let counter = 0;
+        arr_id.forEach((item) => {
+            const product = this.items.find((item_obj) => item_obj.id === item);
+            counter += product.price
+        });
+        return counter
+    }
 }
 
 // класс модели заказа
 export class OrderModel {
     protected order: IOrder = {
-        payment: 'online',
+        payment: '',
         email: '',
         phone: '',
         address: '',
@@ -44,7 +68,6 @@ export class OrderModel {
     //изменить объект Order
     editOrder(data: Partial<IOrder>) {
         Object.assign(this.order, data);
-        // this.events.emit('order_items:edit_item');
     }
 
     //получить список id товаров в заказе
@@ -71,89 +94,28 @@ export class OrderModel {
         this.events.emit('order_items:change_order');
     }
 
-    // отправить заказ на сервер
-    sendOrder() {};
+    // получить способ оплаты заказа
+    getOrderPayment() {
+        return this.order.payment
+    };
+
+    // получить адресс доставки
+    getOrderAddress() {
+        return this.order.address
+    };
+
+    // получить почту пользователя
+    getOrderEmail() {
+        return this.order.email
+    };
+
+    // получить телефон пользователя
+    getOrderPhone() {
+        return this.order.phone
+    };
+
+    // получить объект заказа
+    getOrder() {
+        return this.order;
+    };
 }
-
-
-
-// export class OrderModel {
-//     protected items: IOrder[] = [];
-
-//     constructor(protected events: IEvents) {}
-
-//     //добавить в массив объектов объект Order
-//     addOrder(item: IOrder) {
-//         this.items = [item, ...this.items]
-//         // this.events.emit('order_items:add_item');
-//     };
-
-//     //получить объект Order
-//     getOrder(id: string) {
-//         return this.items.find((item) => item.id === id);
-//     };
-
-//     //изменить объект Order
-//     editOrder(id: string, data: Partial<IOrder>) {
-//         const item = this.getOrder(id);
-//         if (item) {
-//             Object.assign(item, data);
-//             // this.events.emit('order_items:edit_item');
-//         }
-//     };
-
-//     //отправить заказ на сервер
-//     sendOrder(item: IOrder) {};
-
-//     //добавить товар в заказ
-//     addProduct(id: string, data: string) {
-//         const item = this.getOrder(id);
-//         if (item) {
-//             item.items = [data, ...item.items]
-//             this.events.emit('order_items:add_item', { _id: id });
-//         }
-//     };
-
-//     //удалить товар из заказа
-//     removeProduct(id: string, data: string) {
-//         const item = this.getOrder(id);
-//         if (item) {
-//             item.items = item.items.filter(function(item) {
-//                 return item !== data
-//         })
-//         // this.events.emit('order_items:remove_product');
-//         }
-//     };
-
-//     //получить список id товаров в заказе
-//     getArrIdProduct(id: string) {
-//         const item = this.getOrder(id);
-//         return item.items
-//     };
-
-//     //получить полную стоимость заказа
-//     getTotalOrder(id: string, items: IProduct[]) {
-//         let counter = 0;
-//         const listProduct = this.getArrIdProduct(id);
-//         listProduct.forEach((item) => {
-//             const product = items.find((item_obj) => item_obj.id === item);
-//             counter += product.price
-//         });
-//         return counter
-//     };
-
-//     //получить количество товаров в заказе
-//     getCounter(id: string) {
-//         const item = this.getOrder(id);
-//         return item.items.length
-//     };
-
-//     //валидация поля email
-//     validateEmail(data: string) {};
-
-//     //валидация поля phone
-//     validatePhone(data: string) {};
-
-//     //валидация поля address
-//     validateAddress(data: string) {};
-// }

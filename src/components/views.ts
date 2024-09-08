@@ -1,6 +1,6 @@
 import { ensureElement } from "../utils/utils";
 import { Component } from "./base/component";
-import { IPage, ICard, IModal, IProduct, IBasket, ICardBasket, ISettingsOrder, IUserInfo, ISuccessPage } from "../types";
+import { IPage, ICard, IModal, IProduct, IBasket, ICardBasket, ISettingsOrder, IUserInfo, ISuccessPage, PaymentElement } from "../types";
 import { IEvents } from "./base/events";
 import { ModalBase } from "./modal";
 
@@ -137,22 +137,53 @@ export class Basket extends Component<IBasket> implements IBasket {
     set total(value: number) {
         this.totalOrder.textContent = `${value} синапсов`
     };
+
+    set valid(isValid: boolean) {
+        if (!isValid) {
+            this.placeOrderButton.setAttribute('disabled', '');
+        } else {
+            this.placeOrderButton.removeAttribute('disabled');
+        };
+	}
 }
 
 
 // Класс отображения элемента списка товаров в корзине
-export class CardBasket extends Card implements ICardBasket {
+export class CardBasket extends Component<ICardBasket> {
     protected itemIndex: HTMLElement;
+    protected titleItem: HTMLElement;
+    protected priceItem: HTMLElement;
     protected deleteButton: HTMLButtonElement;
+    protected _id: string;
 
     constructor(container: HTMLElement, protected events: IEvents) {
-        super(container, events);
+        super(container);
         this.itemIndex = ensureElement('.basket__item-index', this.container);
+        this.titleItem = ensureElement('.card__title', this.container);
+        this.priceItem = ensureElement('.card__price', this.container);
         this.deleteButton = ensureElement('.basket__item-delete', this.container) as HTMLButtonElement;
-        this.deleteButton.addEventListener('click', () => this.events.emit('delete:click', {id: this._id}));
+        this.deleteButton.addEventListener('click', () => this.events.emit('deleteProduct:click', {id: this._id}));
     }
 
-    set indexItem(value: number) {};
+    // устанавливает id товара
+    set id(value: string) {
+        this._id = value;
+    };
+
+    // устанавливает номер товара в списке товаров в корзине
+    set indexItem(value: number) {
+        this.setText(this.itemIndex, `${value}`);
+    };
+
+    // устанавливает название товара
+    set title(value: string) {
+        this.setText(this.titleItem, value);
+    };
+
+    // устанавливает цену товара
+    set price(value: number) {
+        this.setText(this.priceItem, `${value}`);
+    };
 }
 
 
@@ -163,24 +194,57 @@ export class SettingsOrder extends Component<ISettingsOrder> implements ISetting
     protected paymentReceiptButton: HTMLButtonElement;
     protected addressInput: HTMLInputElement;
     protected nextButton: HTMLButtonElement;
+    protected errorMessage: HTMLElement;
 
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
+        this.formElement = this.container as HTMLFormElement;
 		this.addressInput = ensureElement('.form__input', this.container) as HTMLInputElement;
-        this.paymentOnlineButton = ensureElement('.order__buttons', this.container).firstChild as HTMLButtonElement;
-        this.paymentReceiptButton = ensureElement('.order__buttons', this.container).lastChild as HTMLButtonElement;
-        this.nextButton = ensureElement('.modal__actions', this.container).firstChild as HTMLButtonElement;
+        this.paymentOnlineButton = ensureElement('button[name="card"]', this.container) as HTMLButtonElement;
+        this.paymentReceiptButton = ensureElement('button[name="cash"]', this.container) as HTMLButtonElement;
+        this.nextButton = ensureElement('.order__button', this.container) as HTMLButtonElement;
+        this.errorMessage = ensureElement('.form__errors', this.container) as HTMLElement;
         this.addressInput.addEventListener('change', () => this.events.emit('inputAddress:change', {value: this.addressInput.value}));
-        this.paymentOnlineButton.addEventListener('click', () => this.events.emit('payment:click', {payment: 'online'}));
-        this.paymentReceiptButton.addEventListener('click', () => this.events.emit('payment:click', {payment: 'receipt'}));
-        this.nextButton.addEventListener('click', () => this.events.emit('settingsNext:click'));
+        this.paymentOnlineButton.addEventListener('click', () => this.events.emit('payment:click', {paymentOrder: 'Онлайн'}));
+        this.paymentReceiptButton.addEventListener('click', () => this.events.emit('payment:click', {paymentOrder: 'При получении'}));
+        this.formElement.addEventListener('submit', (evt) => {
+			evt.preventDefault();
+            this.events.emit('settingsNext:click');
+        });
     }
 
     set address(data: string) {
         this.addressInput.value = data;
-    }
+    };
 
-    set payment(data: string) {};
+    set payment(data: PaymentElement) {
+        if (data === 'Онлайн') {
+            this.paymentOnlineButton.classList.remove('button_alt');
+            this.paymentReceiptButton.classList.add('button_alt');
+        } else if (data === 'При получении') {
+            this.paymentOnlineButton.classList.add('button_alt');
+            this.paymentReceiptButton.classList.remove('button_alt');
+        } else {
+            if (!this.paymentOnlineButton.classList.contains('button_alt')) {
+                this.paymentOnlineButton.classList.add('button_alt');
+            }
+            if (!this.paymentReceiptButton.classList.contains('button_alt')) {
+                this.paymentReceiptButton.classList.add('button_alt');
+            }
+        }
+    };
+
+    set error(data: string) {
+        this.errorMessage.textContent = data;
+    };
+
+    set valid(isValid: boolean) {
+        if (!isValid) {
+            this.nextButton.setAttribute('disabled', '');
+        } else {
+            this.nextButton.removeAttribute('disabled');
+        };
+	}
 }
 
 
@@ -190,16 +254,21 @@ export class UserInfo extends Component<IUserInfo> implements IUserInfo {
     protected emailInput: HTMLInputElement;
     protected phoneInput: HTMLInputElement;
     protected nextButton: HTMLButtonElement;
+    protected errorMessage: HTMLElement;
 
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
-        const orderTag = ensureElement('.order', this.container) as HTMLElement;
-		this.emailInput = ensureElement('input', orderTag).firstChild as HTMLInputElement;
-        this.phoneInput = ensureElement('input', orderTag).lastChild as HTMLInputElement;
+        this.formElement = this.container as HTMLFormElement;
+		this.emailInput = ensureElement('input[name="email"]', this.container) as HTMLInputElement;
+        this.phoneInput = ensureElement('input[name="phone"]', this.container) as HTMLInputElement;
         this.nextButton = ensureElement('.button', this.container) as HTMLButtonElement;
+        this.errorMessage = ensureElement('.form__errors', this.container) as HTMLElement;
         this.emailInput.addEventListener('change', () => this.events.emit('inputEmail:change', {value: this.emailInput.value}));
         this.phoneInput.addEventListener('change', () => this.events.emit('inputPhone:change', {value: this.phoneInput.value}));
-        this.nextButton.addEventListener('click', () => this.events.emit('userInfoNext:click'));
+        this.formElement.addEventListener('submit', (evt) => {
+			evt.preventDefault();
+            this.events.emit('userInfoNext:click');
+        });
     }
 
     set email(data: string) {
@@ -209,6 +278,18 @@ export class UserInfo extends Component<IUserInfo> implements IUserInfo {
     set phone(data: string) {
         this.phoneInput.value = data;
     }
+
+    set error(data: string) {
+        this.errorMessage.textContent = data;
+    };
+
+    set valid(isValid: boolean) {
+        if (!isValid) {
+            this.nextButton.setAttribute('disabled', '');
+        } else {
+            this.nextButton.removeAttribute('disabled');
+        };
+	}
 }
 
 
@@ -219,7 +300,7 @@ export class SuccessPage extends Component<ISuccessPage> implements ISuccessPage
 
     constructor(container: HTMLElement, protected events: IEvents) {
         super(container);
-        this.totalOrder = ensureElement('.film__description', this.container) as HTMLElement;
+        this.totalOrder = ensureElement('.order-success__description', this.container) as HTMLElement;
         this.nextButton = ensureElement('.order-success__close', this.container) as HTMLButtonElement;
         this.nextButton.addEventListener('click', () => this.events.emit('success:click'));
     }
