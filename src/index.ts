@@ -228,19 +228,19 @@ events.on('userInfoNext:click', () => {
       modal.render({
         contentModal: succesHTML
       })
+      orderModel.editOrder({
+        payment: '',
+        email: '',
+        phone: '',
+        address: '',
+        items: []
+      });
     })
     .catch((err) => console.log(err));
 });
 
 //вернуться к покупкам
 events.on('success:click', () => {
-  orderModel.editOrder({
-    payment: '',
-    email: '',
-    phone: '',
-    address: '',
-    items: []
-  });
   modal.close();
   const itemsHTMLArray =  productModel.getProductsList().map(item => new Card(cloneTemplate(cardTemplate), events).render(item));
   const counter = orderModel.getCounter();

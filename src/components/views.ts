@@ -1,4 +1,5 @@
 import { ensureElement } from "../utils/utils";
+import { settings } from "../utils/constants";
 import { Component } from "./base/component";
 import { IPage, ICard, IModal, IProduct, IBasket, ICardBasket, ISettingsOrder, IUserInfo, ISuccessPage, PaymentElement } from "../types";
 import { IEvents } from "./base/events";
@@ -56,6 +57,9 @@ export class Card extends Component<ICard> {
     // устанавливает категорию товара
     set category(value: string) {
         this.setText(this.categoryItem, value);
+        this.categoryItem.classList.remove(this.categoryItem.classList[1]);
+        const styleCategory: string = settings[value];
+        this.categoryItem.classList.add(styleCategory);
     };
 
     // устанавливает название товара
